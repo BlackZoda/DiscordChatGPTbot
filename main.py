@@ -1,9 +1,11 @@
 import os
+import re
 from dotenv import load_dotenv
 from discord import Intents
 from discord.ext import commands
 from response import generate_response
 from utils.string_utils import split_string_list
+from utils.string_utils import re_clean
 from logger import get_logger
 
 # General setup and keys
@@ -43,7 +45,7 @@ async def on_message(message):
         response = generate_response(prompt)
         split_message = split_string_list([response])
         for msg in split_message:
-            await message.channel.send(msg)
+            await message.channel.send(re_clean(msg))
             logger.info(
                 f"Sent message to {message.author} in channel {message.channel}: {message.content}")
 

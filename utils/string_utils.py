@@ -1,3 +1,6 @@
+import re
+
+
 def split_string_list(strings, max_length=1990):
     result = []
     current_chunk = ""
@@ -17,3 +20,10 @@ def split_string_list(strings, max_length=1990):
         result.append(current_chunk.strip())
 
     return result
+
+
+def re_clean(string):
+    pattern = r"^As an AI language model, "
+
+    return re.sub(pattern, "", string)
+
