@@ -8,7 +8,7 @@ def get_logger(name):
     logger.setLevel(logging.DEBUG)
 
     # File handler
-    log_file = os.path(os.path.dirname(__file__), "bot.log")
+    log_file = os.path.join(os.path.dirname(__file__), "bot.log")
     file_handler = logging.FileHandler(log_file)
     file_handler.setLevel(logging.DEBUG)
 

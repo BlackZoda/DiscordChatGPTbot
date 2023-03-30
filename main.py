@@ -4,11 +4,14 @@ from discord import Intents
 from discord.ext import commands
 from response import generate_response
 from utils.string_utils import split_string_list
+from logger import get_logger
 
-# Get API keys and tokens
+# General setup and keys
 load_dotenv()
 
 discord_token = os.getenv("DISCORD_TOKEN")
+
+logger = get_logger(__name__)
 
 # Set up the bot with the required intents and command prefix
 intents = Intents.default()
@@ -22,7 +25,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f"Bot is ready! Logged in as {bot.user}")
+    logger.info(f"Bot is ready! Logged in as {bot.user}")
 
 
 @bot.event
@@ -31,9 +34,9 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    print(
+    logger.info(
         f"Received message from {message.author} in channel {message.channel}: {message.content}")
-    print(f"Channel type: {message.channel.type}")
+    logger.debug(f"Channel type: {message.channel.type}")
 
     if message.content.startswith('!gpt'):
         prompt = message.content[5:]
@@ -41,7 +44,7 @@ async def on_message(message):
         split_message = split_string_list([response])
         for msg in split_message:
             await message.channel.send(msg)
-            print(
+            logger.info(
                 f"Sent message to {message.author} in channel {message.channel}: {message.content}")
 
 bot.run(discord_token)

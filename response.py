@@ -1,10 +1,14 @@
 import os
 import requests
 from dotenv import load_dotenv
+from logger import get_logger
 
 load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
+
+logger = get_logger(__name__)
+
 
 def generate_response(prompt):
     headers = {
@@ -25,5 +29,5 @@ def generate_response(prompt):
         message = response.json()["choices"][0]["message"]["content"].strip()
         return message
     else:
-        print(f"Error: Received status code {response.status_code}")
+        logger.error(f"Error: Received status code {response.status_code}")
         return "Sorry, I couldn't generate a response."
