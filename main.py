@@ -43,6 +43,27 @@ def generate_response(prompt):
         return "Sorry, I couldn't generate a response."
 
 
+def split_string_list(strings, max_length=1990):
+    result = []
+    current_chunk = ""
+
+    for text in strings:
+        paragraphs = text.split('\n')
+        for paragraph in paragraphs:
+            if len(current_chunk) + len(paragraph) + 1 <= max_length:
+                if current_chunk:
+                    current_chunk += "\n"
+                current_chunk += paragraph
+            else:
+                result.append(current_chunk.strip())
+                current_chunk = paragraph
+
+    if current_chunk:
+        result.append(current_chunk.strip())
+
+    return result
+
+
 @bot.event
 async def on_ready():
     print(f"Bot is ready! Logged in as {bot.user}")
@@ -61,7 +82,13 @@ async def on_message(message):
     if message.content.startswith('!gpt'):
         prompt = message.content[5:]
         response = generate_response(prompt)
-        await message.channel.send(response)
+        # Wrap the response string in a list
+        split_message = split_string_list([response])
+        for msg in split_message:  # Replace 'message' with 'msg' to avoid confusion
+            # Remove 'list' since split_message is already a list
+            await message.channel.send(msg)
+            print(
+                f"Sent message to {message.author} in channel {message.channel}: {message.content}")
 
     # await bot.process_commands(message)
 
