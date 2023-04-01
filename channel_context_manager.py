@@ -1,18 +1,16 @@
 from collections import deque, defaultdict
-from tokenizers import Tokenizer, models, pre_tokenizers, decoders, trainers
+from tokenizers import Tokenizer, models, pre_tokenizers, decoders, processors
 from tokenizers.processors import TemplateProcessing
 from logger import get_logger
 
 # Initialize a tokenizer to count tokens
-tokenizer = Tokenizer(models.BPE())
+
+tokenizer = Tokenizer.from_file("./tokenizer/tokenizer-wiki.json")
 tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=True)
 tokenizer.decoder = decoders.ByteLevel()
-tokenizer.post_processor = TemplateProcessing(
+tokenizer.post_processor = processors.TemplateProcessing(
     single="$0", special_tokens=[("[CLS]", 0), ("[SEP]", 1)]
 )
-
-# Set the maximum number of tokens for the context
-max_context_tokens = 2000
 
 # Create a dictionary to store recent messages in each channel
 channel_context = defaultdict(deque)
@@ -27,19 +25,21 @@ def add_message_to_context(channel_id, user, message):
         for user, msg in channel_context[channel_id]:
             f.write(f"{user}: {msg}\n")
 
+    trim_context_to_token_limit(channel_id, 100)
+
 
 def trim_context_to_token_limit(channel_id: str, token_limit: int):
     context = get_context(channel_id)
-    if len(context) <= token_limit:
-        return
-
     lines = context.split("\n")
     tokens = 0
     trimmed_lines = []
 
     for line in reversed(lines):
-        line_tokens = len(tokenizer.encode(line))
+        line_tokens = len(tokenizer.encode(line).ids)
         tokens += line_tokens
+
+        print("Line tokens: " + str(line_tokens))
+        print("Tokens: " + str(tokens))
 
         if tokens > token_limit:
             break

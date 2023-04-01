@@ -6,6 +6,7 @@ from response import generate_response
 from utils.string_utils import split_string_list
 from utils.string_utils import re_clean
 from logger import get_logger
+from requests.exceptions import RequestException
 import channel_context_manager as ccm
 
 # General setup and keys
@@ -37,11 +38,14 @@ async def on_message(message):
 
     channel_id = message.channel.id
     content = message.content
+    max_context_tokens = 1600
+
     if content.startswith('!gpt'):
         content = content[5:].strip()
+
     ccm.add_message_to_context(
         channel_id, str(message.author), content)
-    ccm.trim_context_to_token_limit(channel_id, 1800)
+    ccm.trim_context_to_token_limit(channel_id, max_context_tokens)
 
     logger.info(
         f"Received message from {message.author} in channel {message.channel}: {message.content}")
@@ -50,8 +54,12 @@ async def on_message(message):
     if message.content.startswith('!gpt'):
 
         token_limit = ccm.get_remaining_tokens(channel_id, 4000)
-        response = generate_response(content, channel_id, token_limit)
 
+        try:
+            response = generate_response(content, channel_id, token_limit)
+        except RequestException as e:
+            response = "I'm sorry, but I encountered an error while processing your request. Please try again later."
+            logger.exception("Error generating response")
         # Add the bot's response to the context
         ccm.add_message_to_context(channel_id, str(bot.user), response)
 
