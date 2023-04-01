@@ -25,7 +25,7 @@ def add_message_to_context(channel_id, user, message):
         for user, msg in channel_context[channel_id]:
             f.write(f"{user}: {msg}\n")
 
-    trim_context_to_token_limit(channel_id, 100)
+    trim_context_to_token_limit(channel_id, 3000)
 
 
 def trim_context_to_token_limit(channel_id: str, token_limit: int):
@@ -37,9 +37,6 @@ def trim_context_to_token_limit(channel_id: str, token_limit: int):
     for line in reversed(lines):
         line_tokens = len(tokenizer.encode(line).ids)
         tokens += line_tokens
-
-        print("Line tokens: " + str(line_tokens))
-        print("Tokens: " + str(tokens))
 
         if tokens > token_limit:
             break
@@ -60,27 +57,21 @@ def set_context(channel_id, context):
         f.write(context)
 
 
-def read_context_from_file(channel_id, token_limit):
+def read_context_from_file(channel_id):
     with open(f"contexts/context_{channel_id}.txt", "r") as f:
         lines = f.readlines()
 
     context = ""
-    context_tokens = 0
 
     for line in reversed(lines):
-        tokens = tokenizer.encode(line)
-        if context_tokens + len(tokens) <= token_limit:
-            context = line + context
-            context_tokens += len(tokens)
-        else:
-            break
+        context = line + context
 
     return context
 
 
 def get_remaining_tokens(channel_id, token_limit):
     context_tokens = sum(
-        len(tokenizer.encode(line)) for line in read_context_from_file(channel_id, token_limit).splitlines()
+        len(tokenizer.encode(line)) for line in read_context_from_file(channel_id).splitlines()
     )
-    return 1600
-    # return token_limit - context_tokens - 400
+
+    return token_limit - context_tokens - 397

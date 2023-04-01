@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 @retry(ConnectionError, tries=5, delay=2)
 def generate_response(prompt, channel_id, token_limit):
 
-    context = ccm.read_context_from_file(channel_id, 1800)
+    context = ccm.read_context_from_file(channel_id)
 
     headers = {
         "Content-Type": "application/json",
@@ -29,7 +29,7 @@ def generate_response(prompt, channel_id, token_limit):
             {"role": "system", "content": context},
             {"role": "user", "content": prompt}],
         "temperature": 0.7,
-        "max_tokens": 1800
+        "max_tokens": token_limit
     }
 
     # print(f"\n{headers}\n \n{data}\n")
