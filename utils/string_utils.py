@@ -23,7 +23,10 @@ def split_string_list(strings, max_length=1990):
 
 
 def re_clean(string):
-    pattern = r"^As an AI language model, "
+    pattern1 = r"(?i)as an AI language model, "
+    pattern2 = r"(?<=\w)#\d{4}"
 
-    return re.sub(pattern, "", string)
+    string = re.sub(pattern1, "", string)
+    string = re.sub(pattern2, "", string)
 
+    return string
