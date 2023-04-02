@@ -2,10 +2,9 @@ import os
 import requests
 from retry import retry
 from dotenv import load_dotenv
-from logger import get_logger
-import channel_context_manager as ccm
-from channel_context_manager import tokenizer
-from custom_prompts import npcs
+from .logger import get_logger
+from . import channel_context_manager as ccm
+from .custom_prompts import npcs
 
 load_dotenv()
 
@@ -22,8 +21,10 @@ def generate_response(prompt, channel_id, token_limit, user):
     print(f"User: '{user}', Type: {type(user)}")
     if str(user) == "Eledain#2058":
         context += npcs["Paulie Zasa"]
-    elif str(user) == "XartaX#2827" or "BlackZoda#7659":
+    elif str(user) == "XartaX#2827":
         context += npcs["Rusty"]
+    elif str(user) == "Krash#9273":
+        context += npcs["Adrienne Laroche"]
     else:
         context += npcs["Oblivion"]
 

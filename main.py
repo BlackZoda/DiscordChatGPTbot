@@ -2,13 +2,13 @@ import os
 from dotenv import load_dotenv
 from discord import Intents
 from discord.ext import commands
-from response import generate_response
-from utils.string_utils import split_string_list
-from utils.string_utils import re_clean
-from logger import get_logger
+from src.response import generate_response
+from src.utils.string_utils import split_string_list
+from src.utils.string_utils import re_clean
+from src.logger import get_logger
 from requests.exceptions import RequestException
-import channel_context_manager as ccm
-from custom_prompts import npcs
+import src.channel_context_manager as ccm
+from src.custom_prompts import npcs
 
 # General setup and keys
 load_dotenv()

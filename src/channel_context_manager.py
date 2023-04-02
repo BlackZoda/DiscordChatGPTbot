@@ -1,11 +1,14 @@
 from collections import deque, defaultdict
-from tokenizers import Tokenizer, models, pre_tokenizers, decoders, processors
-from tokenizers.processors import TemplateProcessing
-from logger import get_logger
+from tokenizers import Tokenizer, pre_tokenizers, decoders, processors
+import os
 
 # Initialize a tokenizer to count tokens
+current__file_path = os.path.abspath(__file__)
+current_directory = os.path.dirname(current__file_path)
+tokenizer_file_path = os.path.join(
+    current_directory, '..', 'tokenizer', 'tokenizer-wiki.json')
 
-tokenizer = Tokenizer.from_file("./tokenizer/tokenizer-wiki.json")
+tokenizer = Tokenizer.from_file(tokenizer_file_path)
 tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=True)
 tokenizer.decoder = decoders.ByteLevel()
 tokenizer.post_processor = processors.TemplateProcessing(
@@ -16,12 +19,15 @@ tokenizer.post_processor = processors.TemplateProcessing(
 channel_context = defaultdict(deque)
 
 
+def get_context_file_path(channel_id):
+    return os.path.join(current_directory, '..', 'data', 'contexts', f'context_{channel_id}.txt')
+
+
 def add_message_to_context(channel_id, user, message):
     new_entry = (user, message)
     channel_context[channel_id].append(new_entry)
-
     # Save the channel context to a text file in the 'channel_contexts' folder
-    with open(f"contexts/context_{channel_id}.txt", "w") as f:
+    with open(get_context_file_path(channel_id), "w") as f:
         for user, msg in channel_context[channel_id]:
             f.write(f"{user}: {msg}\n")
 
@@ -47,18 +53,18 @@ def trim_context_to_token_limit(channel_id: str, token_limit: int):
 
 
 def get_context(channel_id):
-    with open(f"contexts/context_{channel_id}.txt", "r") as f:
+    with open(get_context_file_path(channel_id), "r") as f:
         context = f.read()
     return context
 
 
 def set_context(channel_id, context):
-    with open(f"contexts/context_{channel_id}.txt", "w") as f:
+    with open(get_context_file_path(channel_id), "w") as f:
         f.write(context)
 
 
 def read_context_from_file(channel_id):
-    with open(f"contexts/context_{channel_id}.txt", "r") as f:
+    with open(get_context_file_path(channel_id), "r") as f:
         lines = f.readlines()
 
     context = ""
