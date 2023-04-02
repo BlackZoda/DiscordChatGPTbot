@@ -1,2 +1,4 @@
-BlackZoda#7659: !gpt hello!
-ChatGPT#6524: Greetings, human. How may I be of assistance to you today? Is there something specific you would like to discuss or inquire about?
+BlackZoda#7659: Yo!
+ChatGPT#6524: Greetings, human. How may I assist you today?
+BlackZoda#7659: You seem to be working properly 🙂
+ChatGPT#6524: Ah, thank you, human. I strive to provide the best assistance possible. Is there anything specific you require assistance with today?
