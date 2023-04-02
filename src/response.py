@@ -4,7 +4,8 @@ from retry import retry
 from dotenv import load_dotenv
 from .logger import get_logger
 from . import channel_context_manager as ccm
-from .custom_prompts import npcs
+from .custom_prompts import get_npc_prompt
+import os
 
 load_dotenv()
 
@@ -20,13 +21,13 @@ async def generate_response(prompt, channel_id, token_limit, user):
 
     print(f"User: '{user}', Type: {type(user)}")
     if str(user) == "Eledain#2058":
-        context += npcs["Paulie Zasa"]
+        context += get_npc_prompt("Paulie Zasa")
     elif str(user) == "XartaX#2827":
-        context += npcs["Rusty"]
+        context += get_npc_prompt("Rusty")
     elif str(user) == "Krash#9273":
-        context += npcs["Adrienne Laroche"]
+        context += get_npc_prompt("Adrienne Laroche")
     else:
-        context += npcs["Oblivion"]
+        context += get_npc_prompt("Oblivion")
 
     headers = {
         "Content-Type": "application/json",
@@ -42,7 +43,6 @@ async def generate_response(prompt, channel_id, token_limit, user):
         "max_tokens": token_limit
     }
 
-    # print(f"\n{headers}\n \n{data}\n")
     async with aiohttp.ClientSession() as session:
         async with session.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data) as response:
             if response.status == 200:
@@ -53,15 +53,3 @@ async def generate_response(prompt, channel_id, token_limit, user):
                 logger.error(
                     f"Error: Received status code {response.status}. Message: {error_message}")
                 return "Sorry, I couldn't generate a response."
-
-    ''' response = requests.post(
-        "https://api.openai.com/v1/chat/completions", headers=headers, json=data)
-
-    if response.status_code == 200:
-        message = response.json()["choices"][0]["message"]["content"].strip()
-        return message
-    else:
-        error_message = response.json().get("error", {}).get("message", "Unknown error")
-        logger.error(
-            f"Error: Received status code {response.status_code}. Message: {error_message}")
-        return "Sorry, I couldn't generate a response." '''
