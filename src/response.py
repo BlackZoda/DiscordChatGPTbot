@@ -1,5 +1,5 @@
 import os
-import requests
+import aiohttp
 from retry import retry
 from dotenv import load_dotenv
 from .logger import get_logger
@@ -14,7 +14,7 @@ logger = get_logger(__name__)
 
 
 @retry(ConnectionError, tries=5, delay=2)
-def generate_response(prompt, channel_id, token_limit, user):
+async def generate_response(prompt, channel_id, token_limit, user):
 
     context = ccm.read_context_from_file(channel_id)
 
@@ -43,8 +43,18 @@ def generate_response(prompt, channel_id, token_limit, user):
     }
 
     # print(f"\n{headers}\n \n{data}\n")
+    async with aiohttp.ClientSession() as session:
+        async with session.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data) as response:
+            if response.status == 200:
+                message = (await response.json())["choices"][0]["message"]["content"].strip()
+                return message
+            else:
+                error_message = (await response.json()).get("error", {}).get("message", "Unknown error")
+                logger.error(
+                    f"Error: Received status code {response.status}. Message: {error_message}")
+                return "Sorry, I couldn't generate a response."
 
-    response = requests.post(
+    ''' response = requests.post(
         "https://api.openai.com/v1/chat/completions", headers=headers, json=data)
 
     if response.status_code == 200:
@@ -54,4 +64,4 @@ def generate_response(prompt, channel_id, token_limit, user):
         error_message = response.json().get("error", {}).get("message", "Unknown error")
         logger.error(
             f"Error: Received status code {response.status_code}. Message: {error_message}")
-        return "Sorry, I couldn't generate a response."
+        return "Sorry, I couldn't generate a response." '''
