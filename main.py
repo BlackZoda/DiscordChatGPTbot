@@ -8,6 +8,7 @@ from utils.string_utils import re_clean
 from logger import get_logger
 from requests.exceptions import RequestException
 import channel_context_manager as ccm
+from custom_prompts import npcs
 
 # General setup and keys
 load_dotenv()
@@ -38,23 +39,24 @@ async def on_message(message):
 
     channel_id = message.channel.id
     content = message.content
-
-    if content.startswith('!gpt'):
-        content = content[5:].strip()
+    user = message.author
 
     ccm.add_message_to_context(
         channel_id, str(message.author), content)
 
-    logger.info(
-        f"Received message from {message.author} in channel {message.channel}: {message.content}")
-    logger.debug(f"Channel type: {message.channel.type}")
+    if content.startswith('!gpt'):
 
-    if message.content.startswith('!gpt'):
+        content = content[5:].strip()
+
+        logger.info(
+            f"Received message from {message.author} in channel {message.channel}: {message.content}")
+        logger.debug(f"Channel type: {message.channel.type}")
 
         token_limit = ccm.get_remaining_tokens(channel_id, 4097)
 
         try:
-            response = generate_response(content, channel_id, token_limit)
+            response = generate_response(
+                content, channel_id, token_limit, user)
         except RequestException as e:
             response = "I'm sorry, but I encountered an error while processing your request. Please try again later."
             logger.exception("Error generating response")

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from logger import get_logger
 import channel_context_manager as ccm
 from channel_context_manager import tokenizer
+from custom_prompts import npcs
 
 load_dotenv()
 
@@ -14,9 +15,17 @@ logger = get_logger(__name__)
 
 
 @retry(ConnectionError, tries=5, delay=2)
-def generate_response(prompt, channel_id, token_limit):
+def generate_response(prompt, channel_id, token_limit, user):
 
     context = ccm.read_context_from_file(channel_id)
+
+    print(f"User: '{user}', Type: {type(user)}")
+    if str(user) == "Eledain#2058":
+        context += npcs["Paulie Zasa"]
+    elif str(user) == "XartaX#2827" or "BlackZoda#7659":
+        context += npcs["Rusty"]
+    else:
+        context += npcs["Oblivion"]
 
     headers = {
         "Content-Type": "application/json",
@@ -39,7 +48,6 @@ def generate_response(prompt, channel_id, token_limit):
 
     if response.status_code == 200:
         message = response.json()["choices"][0]["message"]["content"].strip()
-        print(f"\nResponse Message: {message}\n")
         return message
     else:
         error_message = response.json().get("error", {}).get("message", "Unknown error")

@@ -25,8 +25,20 @@ def split_string_list(strings, max_length=1990):
 def re_clean(string):
     pattern1 = r"(?i)as an AI language model, "
     pattern2 = r"(?<=\w)#\d{4}"
+    gpt = r"^ChatGPT: "
+    paulie = r"^Paulie Zasa: "
+    gptpaulie = r"^ChatGPT \(as Paulie Zasa\): "
+    rusty = r"^Rusty: "
+    gptrusty = r"^ChatGPT \(as Rusty\): "
+    oblivion = r"^Oblivion: "
+    gptoblivion = r"^ChatGPT \(as Oblivion\): "
 
     string = re.sub(pattern1, "", string)
     string = re.sub(pattern2, "", string)
+    string = re.sub(gpt, "", string)
+    string = re.sub(paulie, "", string)
+    string = re.sub(rusty, "", string)
+    string = re.sub(oblivion, "", string)
+    string = re.sub(gptoblivion, "", string)
 
     return string

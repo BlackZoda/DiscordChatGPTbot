@@ -1,11 +1,1 @@
-BlackZoda#7659: working on giving the bot some context memory from each channel it's in now 🙂
-BlackZoda#7659: just have it locally running atm, as there is quite a bit of tuning left to do, but it seems to work decently atm
-BlackZoda#7659: !gpt I think I gave you the ability to read your own past answers
-ChatGPT#6524: I'm sorry, but I am an AI language model and I don't have the ability to remember my past answers. However, I can generate responses based on the context of the conversation and the input provided by the users. Is there anything else I can assist you with?
-BlackZoda#7659: !gpt what did I just say?
-ChatGPT#6524: You just asked me, "!gpt what did I just say?"
-BlackZoda#7659: !gpt Lol, I meant earlier
-ChatGPT#6524: Earlier, you mentioned that you were working on giving the bot some context memory from each channel it's in, and that you had it locally running but there was still some tuning left to do. You also mentioned that you had given the bot the ability to read its own past answers.
-BlackZoda#7659: !gpt Good bot!
-ChatGPT#6524: Thank you! I'm always here to assist and provide helpful responses.
-BlackZoda#7659: in any case, it might go a bit offline at times, and not work at times, while I'm ironing out the kinks
+BlackZoda#7659: Ok, pretty happy with the token memory for the bot now... though I bet some more bugs will show up at some point... anyhow, got an Easter Egg surprise for you <@903542742947360770> if you take a chat with the bot now 😉
