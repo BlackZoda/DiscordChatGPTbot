@@ -1,104 +1,101 @@
-import sqlite3
+import aiosqlite
+import asyncio
 
 database_name = "discordgpt.db"
 
 
-def create_tables():
-    with sqlite3.connect(database_name) as conn:
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS npcs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL UNIQUE,
-                abbreviation TEXT NOT NULL UNIQE,
-                pre_prompt TEXT,
-                post_prompt TEXT,
-                description TEXT
-            );
-        """)
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                discord_user_id TEXT NOT NULL UNIQUE,
-                username TEXT NOT NULL,
-                selected_npc_id INTEGER,
-                FOREIGN KEY (selected_npc_id) REFERENCES npcs (id)
-            )
-        """)
-
-        conn.commit()
+db_lock = asyncio.Lock()
 
 
-def add_npc(name, abbrevation, pre_prompt, post_prompt, description):
-    with sqlite3.connect(database_name) as conn:
-        cursor = conn.commit()
-
-        cursor.execute("""
-        INSERT INTO npcs (name, pre_prompt, post_promt) VALUES (?, ?, ?);""",
-                       (name, pre_prompt, post_prompt))
-
-        conn.commit()
+async def init_db():
+    global conn
+    conn = await aiosqlite.connect(database_name)
+    await create_tables()
 
 
-def fetch_all_npcs():
-    with sqlite3.connect(database_name) as conn:
-        cursor = conn.cursor()
+async def create_tables():
+    global conn
+    cursor = await conn.cursor()
 
-        cursor.execute("""
-            SELECT id, name, abbreviation FROM npcs;
-        """)
+    await cursor.execute("""
+        CREATE TABLE IF NOT EXISTS npcs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            abbreviation TEXT NOT NULL UNIQUE,
+            pre_prompt TEXT,
+            post_prompt TEXT,
+            description TEXT
+        );
+    """)
 
-        npcs = cursor.fetchall()
+    await cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            discord_user_id TEXT NOT NULL UNIQUE,
+            username TEXT NOT NULL,
+            npc_id INTEGER,
+            FOREIGN KEY (npc_id) REFERENCES npcs (id)
+        );
+    """)
 
-    return npcs
-
-
-def add_user_if_not_exists(discord_user_id, username):
-    with sqlite3.connect(database_name) as conn:
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            INSERT OR IGNORE INTO users (discord_user_id, username) VALUES (?, ?);
-        """, (discord_user_id, username))
-
-
-def add_user(discord_user_id, username, selected_npc_id=None):
-    with sqlite3.connect(database_name) as conn:
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            INSERT INTO users (discord_user_id, username, selected_npc_id) VALUES (?, ?, ?);
-        """)
-
-        conn.commit()
+    await conn.commit()
 
 
-def update_user_npc(discord_user_id, selected_npc_id):
-    with sqlite3.connect(database_name) as conn:
-        cursor = conn.cursor()
+async def add_npc(name, abbreviation, pre_prompt, post_prompt, description):
+    global conn
+    cursor = await conn.cursor()
 
-        cursor.execute("""
-            UPDATE users SET selected_npc_id = ? WHERE discord_user_id = ?;
-        """, (selected_npc_id, discord_user_id))
+    await cursor.execute("""
+    INSERT INTO npcs (name, abbreviation, pre_prompt, post_prompt, description) VALUES (?, ?, ?, ?, ?);""",
+                         (name, abbreviation, pre_prompt, post_prompt, description))
 
-    conn.commit()
-
-
-def get_selected_npc(discord_user_id):
-    with sqlite3.connect(database_name) as conn:
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            SELECT npcs.* FROM users
-            JOIN npcs ON users.selected_npc_id = npc.id
-            WHERE users.discord_user_id = ?;
-        """, (discord_user_id,))
-
-        npc = cursor.fetchone()
-
-    return npc
+    await conn.commit()
 
 
-create_tables()
+async def get_all_npcs():
+    global conn
+    cursor = await conn.cursor()
+
+    await cursor.execute("""
+        SELECT id, name, abbreviation, description FROM npcs;
+    """)
+
+    return await cursor.fetchall()
+
+
+async def add_user(discord_user_id, username):
+    global conn
+    cursor = await conn.cursor()
+
+    await cursor.execute("""
+        INSERT OR IGNORE INTO users (discord_user_id, username) VALUES (?, ?);
+    """, (discord_user_id, username))
+
+    await conn.commit()
+
+
+async def update_user_npc(discord_user_id, selected_npc_id):
+    global conn
+    cursor = await conn.cursor()
+
+    await cursor.execute("""
+        UPDATE users SET npc_id = ? WHERE discord_user_id = ?;
+    """, (selected_npc_id, discord_user_id))
+
+    await conn.commit()
+
+
+async def get_user_npc(discord_user_id):
+    global conn
+    cursor = await conn.cursor()
+
+    await cursor.execute("""
+        SELECT npcs.* FROM users
+        JOIN npcs ON users.npc_id = npcs.id
+        WHERE users.discord_user_id = ?;
+    """, (discord_user_id,))
+
+    return await cursor.fetchone()
+
+if __name__ == "__main__":
+    asyncio.run(create_tables())

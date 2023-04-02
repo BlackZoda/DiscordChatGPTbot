@@ -19,8 +19,7 @@ async def generate_response(prompt, channel_id, token_limit, user):
 
     context = ccm.read_context_from_file(channel_id)
 
-    print(f"User: '{user}', Type: {type(user)}")
-    if str(user) == "Eledain#2058":
+    if str(user) == "Eledain#2058" or "BlackZoda#7659":
         context += get_npc_prompt("Paulie Zasa")
     elif str(user) == "XartaX#2827":
         context += get_npc_prompt("Rusty")

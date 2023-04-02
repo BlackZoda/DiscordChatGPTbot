@@ -2,6 +2,7 @@ __pycache__/
 data/
 deploy.md
 bot.log
+discordgpt.db
 .env
 .vscode
 .*

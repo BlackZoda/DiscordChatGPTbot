@@ -3,4 +3,5 @@ requests
 python-dotenv
 retry
 aiohttp
-sqlite3
+aiosqlite
+asyncio
