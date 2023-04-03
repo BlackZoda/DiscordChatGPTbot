@@ -27,18 +27,28 @@ def re_clean(string):
     pattern2 = r"(?<=\w)#\d{4}"
     gpt = r"^ChatGPT: "
     paulie = r"^Paulie Zasa: "
+    aspaulie = r"^Paulie Zasa: "
     gptpaulie = r"^ChatGPT \(as Paulie Zasa\): "
     rusty = r"^Rusty: "
+    asrusty = r"^As Rusty, "
     gptrusty = r"^ChatGPT \(as Rusty\): "
+    gptrusty2 = r"^As Rusty, a right-wing conspiracy theorist, "
     oblivion = r"^Oblivion: "
+    asoblivion = r"^As Oblivion, "
     gptoblivion = r"^ChatGPT \(as Oblivion\): "
 
     string = re.sub(pattern1, "", string)
     string = re.sub(pattern2, "", string)
     string = re.sub(gpt, "", string)
     string = re.sub(paulie, "", string)
+    string = re.sub(aspaulie, "", string)
+    string = re.sub(gptpaulie, "", string)
     string = re.sub(rusty, "", string)
+    string = re.sub(asrusty, "", string)
+    string = re.sub(gptrusty, "", string)
+    string = re.sub(gptrusty2, "", string)
     string = re.sub(oblivion, "", string)
+    string = re.sub(asoblivion, "", string)
     string = re.sub(gptoblivion, "", string)
 
     return string

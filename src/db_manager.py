@@ -1,5 +1,6 @@
 import aiosqlite
 import asyncio
+from .models import User, NPC
 
 database_name = "discordgpt.db"
 
@@ -57,10 +58,13 @@ async def get_all_npcs():
     cursor = await conn.cursor()
 
     await cursor.execute("""
-        SELECT id, name, abbreviation, description FROM npcs;
+        SELECT id, name, abbreviation, pre_prompt, post_prompt, description FROM npcs;
     """)
 
-    return await cursor.fetchall()
+    npc_tuples = await cursor.fetchall()
+    npc_list = [NPC(*npc_tuple) for npc_tuple in npc_tuples]
+
+    return npc_list
 
 
 async def add_user(discord_user_id, username):
@@ -95,7 +99,12 @@ async def get_user_npc(discord_user_id):
         WHERE users.discord_user_id = ?;
     """, (discord_user_id,))
 
-    return await cursor.fetchone()
+    npc_tuple = await cursor.fetchone()
+
+    if npc_tuple:
+        return NPC(*npc_tuple)
+    else:
+        return None
 
 if __name__ == "__main__":
     asyncio.run(create_tables())

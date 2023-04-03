@@ -4,7 +4,7 @@ from retry import retry
 from dotenv import load_dotenv
 from .logger import get_logger
 from . import channel_context_manager as ccm
-from .custom_prompts import get_npc_prompt
+from .custom_prompts import load_prompt
 import os
 
 load_dotenv()
@@ -19,14 +19,7 @@ async def generate_response(prompt, channel_id, token_limit, user):
 
     context = ccm.read_context_from_file(channel_id)
 
-    if str(user) == "Eledain#2058" or "BlackZoda#7659":
-        context += get_npc_prompt("Paulie Zasa")
-    elif str(user) == "XartaX#2827":
-        context += get_npc_prompt("Rusty")
-    elif str(user) == "Krash#9273":
-        context += get_npc_prompt("Adrienne Laroche")
-    else:
-        context += get_npc_prompt("Oblivion")
+    context += await load_prompt(str(user.id))
 
     headers = {
         "Content-Type": "application/json",
