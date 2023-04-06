@@ -5,25 +5,29 @@ import os
 def get_logger(name):
     # Logger instance
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
 
-    # File handler
-    log_file = os.path.join(os.path.dirname(__file__), "../data/logs/bot.log")
-    file_handler = logging.FileHandler(log_file)
-    file_handler.setLevel(logging.DEBUG)
+    # Check if handlers are already added to avoid duplicates
+    if not logger.handlers:
+        logger.setLevel(logging.DEBUG)
 
-    # Console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
+        # File handler
+        log_file = os.path.join(os.path.dirname(
+            __file__), "../data/logs/bot.log")
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(logging.DEBUG)
 
-    # Formatter
-    formatter = logging.Formatter(
-        '%(asctime)s %(levelname)s %(name)s %(message)s')
+        # Console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
 
-    # Add handlers to the loggers and set the formatter
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-    file_handler.setFormatter(formatter)
-    console_handler.setFormatter(formatter)
+        # Formatter
+        formatter = logging.Formatter(
+            '%(asctime)s %(levelname)s %(name)s %(message)s')
+
+        # Add handlers to the loggers and set the formatter
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
 
     return logger

@@ -1,10 +1,10 @@
 import os
 import aiohttp
-from retry import retry
 from dotenv import load_dotenv
 from .logger import get_logger
 from . import channel_context_manager as ccm
 from .custom_prompts import load_prompt
+from .db_manager import get_user_npc
 import os
 
 load_dotenv()
@@ -14,12 +14,12 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 logger = get_logger(__name__)
 
 
-@retry(ConnectionError, tries=5, delay=2)
 async def generate_response(prompt, channel_id, token_limit, user):
 
     context = ccm.read_context_from_file(channel_id)
+    npc = await get_user_npc(str(user.id))
 
-    context += await load_prompt(str(user.id))
+    context += await load_prompt(str(user.id), npc.name, str(user))
 
     headers = {
         "Content-Type": "application/json",

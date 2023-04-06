@@ -10,13 +10,14 @@ class User:
 
 
 class NPC:
-    def __init__(self, id, name, abbreviation, pre_prompt, post_prompt, description):
+    def __init__(self, id, name, abbreviation, pre_prompt, post_prompt, description, display):
         self.id = id
         self.name = name
         self.abbreviation = abbreviation
         self.pre_prompt = pre_prompt
         self.post_prompt = post_prompt
         self.description = description
+        self.display = display
 
     def __repr__(self):
         return f"<NPC(id={self.id}, name={self.name}, abbreviation={self.abbreviation}, pre_prompt={self.pre_prompt}, post_prompt={self.post_prompt}, description={self.description})>"

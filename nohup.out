@@ -1,0 +1,123 @@
+  File "/Users/Abusdal/webapps/DiscordChatGPT/main.py", line 85
+    -
+     ^
+SyntaxError: invalid syntax
+  File "/Users/Abusdal/webapps/DiscordChatGPT/main.py", line 85
+    -
+     ^
+SyntaxError: invalid syntax
+2023-04-05 08:07:01,361 INFO __main__ Bot is ready! Logged in as ChatGPT#6524
+Exception ignored in: <module 'threading' from '/Users/Abusdal/opt/anaconda3/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/Users/Abusdal/opt/anaconda3/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+2023-04-05 08:07:29,793 INFO __main__ Bot is ready! Logged in as ChatGPT#6524
+Ignoring exception in command None:
+discord.ext.commands.errors.CommandNotFound: Command "gtp" is not found
+2023-04-05 08:18:04,152 INFO src.chat_message Received message from BlackZoda#7659 in channel Direct Message with Unknown User: Are you there?
+2023-04-05 08:18:07,285 INFO src.chat_message Sent message to BlackZoda#7659 in channel Direct Message with Unknown User: Hark! Ye have summoned Sir Cedric, the valiant knight of the realm! I am here to assist thee in any way that I can. Pray tell, what is thy request?
+2023-04-05 08:37:56,812 INFO __main__ Bot is ready! Logged in as ChatGPT#6524
+2023-04-05 08:38:18,464 INFO src.chat_message Received message from BlackZoda#7659 in channel Direct Message with Unknown User: Hi there!
+2023-04-05 08:38:21,925 INFO src.chat_message Sent message to BlackZoda#7659 in channel Direct Message with Unknown User: Hark, greetings to thee fair maiden or noble sir! 'Tis I, Sir Cedric, Knight of the Realm and defender of the weak and helpless. How may I be of service to thee on this fine day? Wouldst thou require assistance with a quest or perchance a jousting match?
+Ignoring exception in command None:
+discord.ext.commands.errors.CommandNotFound: Command "greetings" is not found
+2023-04-05 08:39:03,895 INFO src.chat_message Received message from BlackZoda#7659 in channel Direct Message with Unknown User: greetings to you as well!
+2023-04-05 08:39:08,022 INFO src.chat_message Sent message to BlackZoda#7659 in channel Direct Message with Unknown User: Hark, fair maiden or noble sir! Pray tell, how may I be of service to thee on this fine day? Wouldst thou require assistance with a quest or perchance a jousting match? I, Sir Cedric, Knight of the Realm and defender of the weak and helpless, am at thy service.
+2023-04-05 08:42:34,396 INFO __main__ Bot is ready! Logged in as ChatGPT#6524
+2023-04-05 08:43:11,200 INFO src.chat_message Received message from BlackZoda#7659 in channel Direct Message with Unknown User: Hi there, fine maiden!
+2023-04-05 08:43:15,404 INFO src.chat_message Sent message to BlackZoda#7659 in channel Direct Message with Unknown User: Greetings, fair lady! Pray tell, what brings you to this fair land on this fine day? Do you seek aid or assistance from a gallant knight such as myself? Or perchance, would you care to engage in a jousting match with me, Sir Cedric, the valiant knight of these lands? My trusty steed, Sir Gallop-a-Lot, stands ready for battle at any moment!
+2023-04-05 08:49:26,116 INFO __main__ Bot is ready! Logged in as ChatGPT#6524
+2023-04-05 08:49:48,091 INFO __main__ Bot is disconnecting...
+[2023-04-05 09:05:52] [INFO    ] discord.client: logging in using static token
+[2023-04-05 09:05:53] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 90d13d66e0c82f4a414dd7e4c37910f8).
+2023-04-05 09:05:55,143 INFO __main__ Bot is ready! Logged in as ChatGPT#6524
+2023-04-05 09:06:02,928 INFO src.chat_message Received message from BlackZoda#7659 in channel Direct Message with Unknown User: Are you working?
+2023-04-05 09:06:06,703 INFO src.chat_message Sent message to BlackZoda#7659 in channel Direct Message with Unknown User: Hark! Greetings, fair traveler! Sir Cedric at thy service! I am indeed in the midst of my knightly duties, striving to aid all those in need! Whether 'tis battling fearsome dragons or rescuing fair damsels, I am ready and willing to serve! Art thou in need of my assistance, good sir/madam?
+2023-04-05 09:32:05,142 INFO __main__ Bot is disconnecting...
+[2023-04-05 09:32:05] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 90d13d66e0c82f4a414dd7e4c37910f8.
+2023-04-05 09:32:05,639 INFO __main__ Bot has reconnected
+2023-04-05 10:12:07,640 INFO src.chat_message Received message from BlackZoda#7659 in channel Direct Message with Unknown User: Are you still working?
+[2023-04-05 10:12:07] [ERROR   ] discord.ext.commands.bot: Ignoring exception in command gpt
+Traceback (most recent call last):
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/core.py", line 229, in wrapped
+    ret = await coro(*args, **kwargs)
+  File "/Users/Abusdal/webapps/DiscordChatGPT/main.py", line 83, in gpt
+    await process_request(cmd_ctx, channel_id, content, user, bot)
+  File "/Users/Abusdal/webapps/DiscordChatGPT/src/chat_message.py", line 21, in process_request
+    response = await generate_response(
+  File "/Users/Abusdal/webapps/DiscordChatGPT/src/response.py", line 20, in generate_response
+    npc = await get_user_npc(str(user.id))
+  File "/Users/Abusdal/webapps/DiscordChatGPT/src/db_manager.py", line 95, in get_user_npc
+    cursor = await conn.cursor()
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/aiosqlite/core.py", line 166, in cursor
+    return Cursor(self, await self._execute(self._conn.cursor))
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/aiosqlite/core.py", line 75, in _conn
+    raise ValueError("no active connection")
+ValueError: no active connection
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/bot.py", line 1350, in invoke
+    await ctx.command.invoke(ctx)
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/core.py", line 1023, in invoke
+    await injected(*ctx.args, **ctx.kwargs)  # type: ignore
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/core.py", line 238, in wrapped
+    raise CommandInvokeError(exc) from exc
+discord.ext.commands.errors.CommandInvokeError: Command raised an exception: ValueError: no active connection
+2023-04-05 10:12:52,578 INFO src.chat_message Received message from BlackZoda#7659 in channel Direct Message with Unknown User: hello?
+[2023-04-05 10:12:52] [ERROR   ] discord.ext.commands.bot: Ignoring exception in command gpt
+Traceback (most recent call last):
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/core.py", line 229, in wrapped
+    ret = await coro(*args, **kwargs)
+  File "/Users/Abusdal/webapps/DiscordChatGPT/main.py", line 83, in gpt
+    await process_request(cmd_ctx, channel_id, content, user, bot)
+  File "/Users/Abusdal/webapps/DiscordChatGPT/src/chat_message.py", line 21, in process_request
+    response = await generate_response(
+  File "/Users/Abusdal/webapps/DiscordChatGPT/src/response.py", line 20, in generate_response
+    npc = await get_user_npc(str(user.id))
+  File "/Users/Abusdal/webapps/DiscordChatGPT/src/db_manager.py", line 95, in get_user_npc
+    cursor = await conn.cursor()
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/aiosqlite/core.py", line 166, in cursor
+    return Cursor(self, await self._execute(self._conn.cursor))
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/aiosqlite/core.py", line 75, in _conn
+    raise ValueError("no active connection")
+ValueError: no active connection
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/bot.py", line 1350, in invoke
+    await ctx.command.invoke(ctx)
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/core.py", line 1023, in invoke
+    await injected(*ctx.args, **ctx.kwargs)  # type: ignore
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/core.py", line 238, in wrapped
+    raise CommandInvokeError(exc) from exc
+discord.ext.commands.errors.CommandInvokeError: Command raised an exception: ValueError: no active connection
+[2023-04-05 10:13:53] [ERROR   ] discord.ext.commands.bot: Ignoring exception in command gpt
+Traceback (most recent call last):
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/core.py", line 229, in wrapped
+    ret = await coro(*args, **kwargs)
+  File "/Users/Abusdal/webapps/DiscordChatGPT/main.py", line 79, in gpt
+    await npc(cmd_ctx, user, user_id, args)
+  File "/Users/Abusdal/webapps/DiscordChatGPT/src/npc.py", line 9, in npc
+    await add_user(str(user_id), str(user))
+  File "/Users/Abusdal/webapps/DiscordChatGPT/src/db_manager.py", line 73, in add_user
+    cursor = await conn.cursor()
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/aiosqlite/core.py", line 166, in cursor
+    return Cursor(self, await self._execute(self._conn.cursor))
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/aiosqlite/core.py", line 75, in _conn
+    raise ValueError("no active connection")
+ValueError: no active connection
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/bot.py", line 1350, in invoke
+    await ctx.command.invoke(ctx)
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/core.py", line 1023, in invoke
+    await injected(*ctx.args, **ctx.kwargs)  # type: ignore
+  File "/Users/Abusdal/opt/anaconda3/envs/discordgpt/lib/python3.9/site-packages/discord/ext/commands/core.py", line 238, in wrapped
+    raise CommandInvokeError(exc) from exc
+discord.ext.commands.errors.CommandInvokeError: Command raised an exception: ValueError: no active connection

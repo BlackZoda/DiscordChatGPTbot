@@ -15,7 +15,7 @@ async def process_request(cmd_ctx, channel_id, content, user, bot):
 
     logger.debug(f"Channel type: {cmd_ctx.channel.type}")
 
-    token_limit = ccm.get_remaining_tokens(channel_id, 4097)
+    token_limit = ccm.get_remaining_tokens(channel_id, 4097 - 400)
 
     try:
         response = await generate_response(
@@ -31,4 +31,4 @@ async def process_request(cmd_ctx, channel_id, content, user, bot):
     for msg in split_message:
         await cmd_ctx.send(re_clean(msg))
         logger.info(
-            f"Sent message to {cmd_ctx.author} in channel {cmd_ctx.channel}: {content}")
+            f"Sent message to {cmd_ctx.author} in channel {cmd_ctx.channel}: {msg}")

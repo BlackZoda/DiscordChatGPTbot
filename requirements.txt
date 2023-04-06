@@ -5,3 +5,4 @@ retry
 aiohttp
 aiosqlite
 asyncio
+tokenizers

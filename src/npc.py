@@ -16,21 +16,31 @@ async def npc(cmd_ctx, user, user_id, args):
 
         if selected_npc_abbr.lower() == "--clear":
             await update_user_npc(str(user_id), None)
-            await cmd_ctx.send("Cleared NPC selecteion.")
+            await cmd_ctx.send("Cleared NPC selection.")
 
         if selected_npc_abbr.lower() == "--list":
             npcs = await get_all_npcs()
+            displayable_npcs = [npc for npc in npcs if npc.display]
+
             header = ["Abbr", "Name"]
-            npc_list = [[npc.abbreviation, npc.name] for npc in npcs]
+            npc_list = [[npc.abbreviation, npc.name]
+                        for npc in displayable_npcs]
+
             table = generate_table(header, npc_list)
             await cmd_ctx.send(f"```Available NPCs:\n{table}\n```")
             return
 
         npcs = await get_all_npcs()
+
+        logger.debug(f"All NPCs: {npcs}")
+        logger.debug(
+            f"Searching for NPC with abbrevation: {selected_npc_abbr.lower()}")
+
         for npc in npcs:
+            logger.debug(f"Checking NPC: {npc.abbreviation} ({npc.name})")
             if npc.abbreviation.lower() == selected_npc_abbr.lower():
                 await update_user_npc(str(user_id), npc.id)
-                await cmd_ctx.send(f"Selected NPC: **{npc.name}**")
+                await cmd_ctx.send(f"{str(user.name)} selected NPC: **{npc.name}**")
                 return
 
         await cmd_ctx.send("No NPC found with the provided abbreviation.")

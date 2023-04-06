@@ -31,7 +31,7 @@ def add_message_to_context(channel_id, user, message):
         for user, msg in channel_context[channel_id]:
             f.write(f"{user}: {msg}\n")
 
-    trim_context_to_token_limit(channel_id, 2700)
+    trim_context_to_token_limit(channel_id, 2000)
 
 
 def trim_context_to_token_limit(channel_id: str, token_limit: int):
