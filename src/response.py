@@ -18,8 +18,10 @@ async def generate_response(prompt, channel_id, token_limit, user):
 
     context = ccm.read_context_from_file(channel_id)
     npc = await get_user_npc(str(user.id))
-
-    context += await load_prompt(str(user.id), npc.name, str(user))
+    if npc is not None:
+        context += await load_prompt(str(user.id), npc.name, str(user))
+    else:
+        context += ""
 
     headers = {
         "Content-Type": "application/json",
@@ -31,7 +33,7 @@ async def generate_response(prompt, channel_id, token_limit, user):
         "messages": [
             {"role": "system", "content": context},
             {"role": "user", "content": prompt}],
-        "temperature": 0.7,
+        "temperature": 0.9,
         "max_tokens": token_limit
     }
 

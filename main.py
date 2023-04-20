@@ -1,3 +1,4 @@
+import random
 import os
 from dotenv import load_dotenv
 from discord import Intents
@@ -22,10 +23,10 @@ intents.presences = False
 intents.messages = True
 intents.message_content = True
 
-import random
+
 class CustomBot(commands.Bot):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args,**kwargs)
+        super().__init__(*args, **kwargs)
 
     async def start(self, *args, **kwargs):
         tries = 5
@@ -40,7 +41,9 @@ class CustomBot(commands.Bot):
                 else:
                     raise e
 
+
 bot = CustomBot(command_prefix="!", intents=intents)
+
 
 @bot.event
 async def on_ready():
@@ -61,6 +64,7 @@ async def on_error(event, *args, **kwargs):
 @bot.event
 async def on_resumed():
     logger.info("Bot has reconnected")
+
 
 @tasks.loop(seconds=60)  # task runs every 60 seconds
 async def my_background_task(self):
@@ -85,7 +89,7 @@ async def gpt(cmd_ctx, *args):
         await npc(cmd_ctx, user, user_id, args)
 
     else:
-        content = " ".join(args)
+        content = " ".join(args).replace('"', '\\"')
         await process_request(cmd_ctx, channel_id, content, user, bot)
 
 
