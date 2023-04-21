@@ -8,14 +8,14 @@ from requests.exceptions import RequestException
 async def process_request(cmd_ctx, channel_id, content, user, bot):
     logger = get_logger(__name__)
 
-    ccm.add_message_to_context(channel_id, str(cmd_ctx.author), content)
+    await ccm.add_message_to_context(channel_id, str(cmd_ctx.author), content)
 
     logger.info(
         f"Received message from {cmd_ctx.author} in channel {cmd_ctx.channel}: {content}")
 
     logger.debug(f"Channel type: {cmd_ctx.channel.type}")
 
-    token_limit = ccm.get_remaining_tokens(channel_id, 4097 - 400)
+    token_limit = await ccm.get_remaining_tokens(channel_id, 4097)
 
     try:
         response = await generate_response(
@@ -24,7 +24,7 @@ async def process_request(cmd_ctx, channel_id, content, user, bot):
         response = "I'm sorry, but I encoutnered an error while processing your request. Please try again later."
         logger.exception("Error generating response")
 
-    ccm.add_message_to_context(channel_id, str(bot.user), response)
+    await ccm.add_message_to_context(channel_id, str(bot.user), response)
 
     split_message = split_string_list([response])
 

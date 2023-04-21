@@ -1,6 +1,7 @@
+import pickle
 import aiosqlite
 import asyncio
-from .models import User, NPC
+from .models import User, NPC, Memory
 
 database_name = "discordgpt.db"
 
@@ -34,8 +35,19 @@ async def create_tables():
             );
         """)
 
-        await conn.commit()
+        await cursor.execute("""
+            CREATE TABLE IF NOT EXISTS memories (
+                id INTEGER PRIMARY KEY,
+                channel_id INTEGER,
+                user TEXT,
+                description TEXT,
+                creation_timestamp REAL,
+                last_accessed_timestamp REAL.
+                embeddings BLOB
+            )
+        """)
 
+        await conn.commit()
 
 
 async def add_npc(name, abbreviation, pre_prompt, post_prompt, description, display):
@@ -44,7 +56,7 @@ async def add_npc(name, abbreviation, pre_prompt, post_prompt, description, disp
 
         await cursor.execute("""
         INSERT INTO npcs (name, abbreviation, pre_prompt, post_prompt, description, display) VALUES (?, ?, ?, ?, ?);""",
-                            (name, abbreviation, pre_prompt, post_prompt, description, display))
+                             (name, abbreviation, pre_prompt, post_prompt, description, display))
 
         await conn.commit()
 
@@ -101,6 +113,55 @@ async def get_user_npc(discord_user_id):
             return NPC(*npc_tuple)
         else:
             return None
+
+
+async def add_memory(memory):
+    async with aiosqlite.connect(database_name) as conn:
+        cursor = await conn.cursor()
+
+        await cursor.execute("""
+            INSERT INTO memories (
+                channel_id,
+                user,
+                description,
+                creation_timestamp,
+                last_accessed_timestamp,
+                embeddings)
+            VALUES (?, ?, ?, ?, ?, ?);
+        """, (
+            memory.channel_id,
+            memory.user,
+            memory.description,
+            memory.creation_timestamp,
+            memory.last_accessed_timestamp,
+            pickle.dumps(memory.embeddings)
+        )
+        )
+
+        await conn.commit()
+
+
+async def get_memories_by_channel(channel_id):
+    async with aiosqlite.connect(database_name) as conn:
+        cursor = await conn.cursor()
+
+        await cursor.execute("""
+            SELECT
+                id,
+                channel_id,
+                user,
+                description,
+                creation_timestamp,
+                last_accessed_timestamp,
+                embeddings
+            FROM memories
+            WHERE channel_id = ?;
+        """, (channel_id,))
+
+        memory_tuples = await cursor.fetchall()
+        memories = [Memory(*memory_tuple) for memory_tuple in memory_tuples]
+
+        return memories
 
 if __name__ == "__main__":
     asyncio.run(create_tables())

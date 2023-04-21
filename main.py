@@ -48,7 +48,7 @@ bot = CustomBot(command_prefix="!", intents=intents)
 @bot.event
 async def on_ready():
     logger.info(f"Bot is ready! Logged in as {bot.user}")
-    await create_tables()
+    # await create_tables()
 
 
 @bot.event

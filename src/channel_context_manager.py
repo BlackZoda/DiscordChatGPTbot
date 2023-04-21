@@ -1,6 +1,11 @@
-from collections import deque, defaultdict
 from tokenizers import Tokenizer, pre_tokenizers, decoders, processors
 import os
+from .models import *
+from .db_manager import *
+from .logger import get_logger
+from .embeddings import *
+
+logger = get_logger(__name__)
 
 # Initialize a tokenizer to count tokens
 current__file_path = os.path.abspath(__file__)
@@ -15,69 +20,59 @@ tokenizer.post_processor = processors.TemplateProcessing(
     single="$0", special_tokens=[("[CLS]", 0), ("[SEP]", 1)]
 )
 
-# Create a dictionary to store recent messages in each channel
-channel_context = defaultdict(deque)
+
+async def add_message_to_context(channel_id, user, message):
+    memory = Memory(None, channel_id, user, message)
+    await add_memory(memory)
+    logger.info(f"Added memory to the database: {memory}")
 
 
-def get_context_file_path(channel_id):
-    return os.path.join(current_directory, '..', 'data', 'contexts', f'context_{channel_id}.txt')
+async def get_contex_by_channel(channel_id, prompt):
+    memories = await get_memories_by_channel(channel_id)
+
+    prompt_embeddings = generate_text_embeddings(prompt)
+
+    scored_memories = []
+    for memory in memories:
+        recency_score = calculate_recency_score(memory)
+        relevance_score = cosine_similarity(
+            prompt_embeddings, memory.embeddings)
+        combined_score = recency_score + relevance_score
+        scored_memories.append((memory, combined_score))
+
+    scored_memories.sort(key=lambda x: x[1], reverse=True)
+
+    selected_memories = select_top_memories(scored_memories)
+
+    descriptions = [memory.description for memory in selected_memories]
+    context = "\n".join(descriptions)
+    return context
 
 
-def add_message_to_context(channel_id, user, message):
-    new_entry = (user, message)
-    channel_context[channel_id].append(new_entry)
-    # Save the channel context to a text file in the 'channel_contexts' folder
-    with open(get_context_file_path(channel_id), "w") as f:
-        for user, msg in channel_context[channel_id]:
-            f.write(f"{user}: {msg}\n")
+def select_top_memories(scored_memories, max_tokens=1500):
+    selected_memories = []
+    current_token_count = 0
 
-    trim_context_to_token_limit(channel_id, 2000)
+    for memory, _ in scored_memories:
+        memory_token_count = len(tokenizer.encode(memory.description).tokens)
 
-
-def trim_context_to_token_limit(channel_id: str, token_limit: int):
-    context = get_context(channel_id)
-    lines = context.split("\n")
-    tokens = 0
-    trimmed_lines = []
-
-    for line in reversed(lines):
-        line_tokens = len(tokenizer.encode(line).ids)
-        tokens += line_tokens
-
-        if tokens > token_limit:
+        if current_token_count + memory_token_count <= max_tokens:
+            selected_memories.append(memory)
+            current_token_count += memory_token_count
+        else:
             break
 
-        trimmed_lines.insert(0, line)
-
-    set_context(channel_id, "\n".join(trimmed_lines))
+    return selected_memories
 
 
-def get_context(channel_id):
-    with open(get_context_file_path(channel_id), "r") as f:
-        context = f.read()
-    return context
+async def get_remaining_tokens(channel_id, token_limit):
+    memories = await get_memories_by_channel(channel_id)
+    context_tokens = sum(len(tokenizer.encode(str(memory)))
+                         for memory in memories)
 
+    remaining_tokens = token_limit - context_tokens - 400
 
-def set_context(channel_id, context):
-    with open(get_context_file_path(channel_id), "w") as f:
-        f.write(context)
+    logger.debug(f"Memories: {memories}")
+    logger.debug(f"context_tokens: {context_tokens}")
 
-
-def read_context_from_file(channel_id):
-    with open(get_context_file_path(channel_id), "r") as f:
-        lines = f.readlines()
-
-    context = ""
-
-    for line in reversed(lines):
-        context = line + context
-
-    return context
-
-
-def get_remaining_tokens(channel_id, token_limit):
-    context_tokens = sum(
-        len(tokenizer.encode(line)) for line in read_context_from_file(channel_id).splitlines()
-    )
-
-    return token_limit - context_tokens - 397
+    return remaining_tokens
