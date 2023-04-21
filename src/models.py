@@ -48,6 +48,7 @@ class Memory:
         self.channel_id = channel_id
         self.embeddings = embeddings if embeddings else generate_text_embeddings(
             self.description)
+        self.recency_score = 0
 
     def __repr__(self):
         return f"<Memory(id={self.id}, user={self.user} description={self.description}, creation_timestamp={self.creation_timestamp}, last_accessed_timestamp={self.last_accessed_timestamp}, channel_id={self.channel_id})>"

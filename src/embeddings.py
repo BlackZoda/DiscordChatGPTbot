@@ -23,7 +23,7 @@ def calculate_recency_score(memory, current_time=None):
     if current_time is None:
         current_time = time.time()
     time_elapsed = current_time - memory.creation_timestamp
-    decay_factor = 0.99
+    decay_factor = 0.8
     recency = np.exp(-time_elapsed * (1-decay_factor))
     return recency
 

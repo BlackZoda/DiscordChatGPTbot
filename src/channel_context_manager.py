@@ -24,10 +24,16 @@ tokenizer.post_processor = processors.TemplateProcessing(
 async def add_message_to_context(channel_id, user, message):
     memory = Memory(None, channel_id, user, message)
     await add_memory(memory)
-    logger.info(f"Added memory to the database: {memory}")
+    # logger.info(f"Added memory to the database: {memory}")
 
 
-async def get_contex_by_channel(channel_id, prompt):
+def select_most_recent_memories(memories, num_recent=5):
+    recent_memories = sorted(
+        memories, key=lambda x: x[0].creation_timestamp, reverse=True)[:num_recent]
+    return recent_memories
+
+
+async def get_context_by_channel(channel_id, prompt):
     memories = await get_memories_by_channel(channel_id)
 
     prompt_embeddings = generate_text_embeddings(prompt)
@@ -37,42 +43,45 @@ async def get_contex_by_channel(channel_id, prompt):
         recency_score = calculate_recency_score(memory)
         relevance_score = cosine_similarity(
             prompt_embeddings, memory.embeddings)
-        combined_score = recency_score + relevance_score
-        scored_memories.append((memory, combined_score))
+        alpha = 0.5
+        combined_score = (alpha * relevance_score) + \
+            ((1 - alpha) * recency_score)
+        scored_memories.append(
+            (memory, (combined_score, relevance_score, recency_score)))
 
-    scored_memories.sort(key=lambda x: x[1], reverse=True)
+    scored_memories.sort(key=lambda x: x[1][0], reverse=True)
 
-    selected_memories = select_top_memories(scored_memories)
+    selected_memories, remaining_words = select_top_memories(scored_memories)
+    most_recent_memories = select_most_recent_memories(scored_memories)
 
-    descriptions = [memory.description for memory in selected_memories]
-    context = "\n".join(descriptions)
-    return context
+    combined_memories = list(
+        {memory[0].id: memory for memory in selected_memories + most_recent_memories}.values())
+    combined_memories.sort(key=lambda x: x[1][2], reverse=False)
+
+    # selected_memories.sort(key=lambda x: x[1][2], reverse=False)
+
+    descriptions = [memory[0].description.replace(
+        f"{memory[0].user}:", "", 1) for memory in combined_memories]
+    context = "\nChat log: [" + ";\n".join(descriptions) + "]\n"
+    return context, remaining_words
 
 
-def select_top_memories(scored_memories, max_tokens=1500):
+def select_top_memories(scored_memories, max_words=1200):
     selected_memories = []
-    current_token_count = 0
+    word_count = 0
 
-    for memory, _ in scored_memories:
-        memory_token_count = len(tokenizer.encode(memory.description).tokens)
+    for memory in scored_memories:
+        memory_word_count = len(memory[0].description.split())
 
-        if current_token_count + memory_token_count <= max_tokens:
+        if word_count + memory_word_count <= max_words:
             selected_memories.append(memory)
-            current_token_count += memory_token_count
+            word_count += memory_word_count
         else:
             break
 
-    return selected_memories
+    remaining_words = 2700 - word_count - 800
 
+    logger.info(f"Remaining words: {remaining_words}")
+    logger.info(f"Word count: {word_count}")
 
-async def get_remaining_tokens(channel_id, token_limit):
-    memories = await get_memories_by_channel(channel_id)
-    context_tokens = sum(len(tokenizer.encode(str(memory)))
-                         for memory in memories)
-
-    remaining_tokens = token_limit - context_tokens - 400
-
-    logger.debug(f"Memories: {memories}")
-    logger.debug(f"context_tokens: {context_tokens}")
-
-    return remaining_tokens
+    return selected_memories, remaining_words

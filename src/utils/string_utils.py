@@ -22,35 +22,43 @@ def split_string_list(strings, max_length=1990):
     return result
 
 
+def re_clean_prompt(string):
+    double_quotes = r'"'
+
+    string = re.sub(double_quotes, '\"', string)
+
+    return string
+
+
 def re_clean(string):
     pattern1 = r"(?i)as an AI language model, "
     pattern2 = r"(?<=\w)#\d{4}"
-    gpt = r"^ChatGPT: "
-    paulie = r"^Paulie Zasa: "
-    aspaulie = r"^As Paulie Zasa, "
-    gptpaulie = r"^ChatGPT \(as Paulie Zasa\): "
-    rusty = r"^Rusty: "
-    asrusty = r"^As Rusty, "
-    gptrusty = r"^ChatGPT \(as Rusty\): "
+    gpt = r"ChatGPT: "
+    paulie = r"Paulie Zasa: "
+    aspaulie = r"As Paulie Zasa, "
+    gptpaulie = r"ChatGPT \(as Paulie Zasa\): "
+    rusty = r"Rusty: "
+    asrusty = r"As Rusty, "
+    gptrusty = r"ChatGPT \(as Rusty\): "
     gptrusty2 = r"As Rusty, a right-wing conspiracy theorist, "
     oblivion = r"Oblivion: "
     asoblivion = r"As Oblivion, "
-    gptoblivion = r"^ChatGPT \(as Oblivion\): "
-    oblivion = r"^Adrienne Laroche: "
-    asoblivion = r"^As Adrienne Laroche, "
-    gptoblivion = r"^ChatGPT \(as Adrienne Laroche\): "
-    luna = r"^Luna Noir: "
-    asluna = r"^As Luna Noir, "
-    gptluna = r"^ChatGPT \(as Luna Noir\): "
-    fluffaloria = r"^Lady Fluffaloria: "
-    asfluffaloria = r"^As Lady Fluffaloria, "
-    gptfluffaloria = r"^ChatGPT \(Lady Fluffaloria\): "
-    gregory = r"^Gregory der Schreckliche: "
-    asgregory = r"^Gregory der Schreckliche, "
-    gptgregory = r"^ChatGPT \(Gregory der Schreckliche\): "
-    sirgregory = r"^Sir Gregory der Schreckliche: "
-    sirasgregory = r"^Sir Gregory der Schreckliche, "
-    sirgptgregory = r"^Sir ChatGPT \(Gregory der Schreckliche\): "
+    gptoblivion = r"ChatGPT \(as Oblivion\): "
+    oblivion = r"Adrienne Laroche: "
+    asoblivion = r"As Adrienne Laroche, "
+    gptoblivion = r"ChatGPT \(as Adrienne Laroche\): "
+    luna = r"Luna Noir: "
+    asluna = r"As Luna Noir, "
+    gptluna = r"ChatGPT \(as Luna Noir\): "
+    fluffaloria = r"Lady Fluffaloria: "
+    asfluffaloria = r"As Lady Fluffaloria, "
+    gptfluffaloria = r"ChatGPT \(Lady Fluffaloria\): "
+    gregory = r"Gregory der Schreckliche: "
+    asgregory = r"Gregory der Schreckliche, "
+    gptgregory = r"ChatGPT \(Gregory der Schreckliche\): "
+    sirgregory = r"Sir Gregory der Schreckliche: "
+    sirasgregory = r"Sir Gregory der Schreckliche, "
+    sirgptgregory = r"Sir ChatGPT \(Gregory der Schreckliche\): "
 
     string = re.sub(pattern1, "", string)
     string = re.sub(pattern2, "", string)
