@@ -66,7 +66,7 @@ async def get_context_by_channel(channel_id, prompt):
     return context, remaining_words
 
 
-def select_top_memories(scored_memories, max_words=1200):
+def select_top_memories(scored_memories, max_words=1100):
     selected_memories = []
     word_count = 0
 
